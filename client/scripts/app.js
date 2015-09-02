@@ -14,17 +14,20 @@ $(document).ready(function() {
     var rooms = {};
     $("#roomSelect option").each(function(){
       var option = $(this).val();
-      if (!(option in rooms)) {
+      if (!(app.escapeHtml(option) in rooms)) {
         rooms[option] = true;
       }
     });
     for (var i = messages.length-1; i > 0; i--) {
-      // console.log(messages[i].us)
+
       if (chosenRoom === "all rooms" || app.escapeHtml(messages[i].roomname) === chosenRoom) {
         app.addMessage(messages[i]);
         var room = $('<span>' + app.escapeHtml(messages[i].roomname) + '</span>');
         var currentRoomName = room[0].innerHTML;
-        if (!(currentRoomName in rooms)) {
+        if (!(currentRoomName + '' in rooms)) {
+          console.log(rooms);
+          console.log(currentRoomName);
+          console.log(currentRoomName in rooms);
           console.log('appending room');
           $("#roomSelect").append('<option>' + currentRoomName + '</option>');
           rooms[currentRoomName] = true;
@@ -75,6 +78,7 @@ $(document).ready(function() {
       //data: JSON.stringify(message),
       contentType: 'application/json',
       success: function (data) {
+        console.log(data.results);
         app.displayMessages(data.results);
       },
       error: function (data) {
@@ -92,7 +96,9 @@ $(document).ready(function() {
       data: JSON.stringify(message),
       contentType: 'application/json',
       success: function (data) {
+        console.log('sent data: ' + data);
         console.log('chatterbox: Message sent');
+
       },
       error: function (data) {
         console.error('chatterbox: Failed to send message');
